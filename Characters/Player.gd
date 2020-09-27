@@ -1,7 +1,7 @@
 extends KinematicBody2D
 
 var BASE_MOVEMENT_WEIGHT = .3
-var BASE_MOVEMENT_SPEED = 16*8
+var BASE_MOVEMENT_SPEED = 16*16
 var speed_multiplier = 2
 var input_velocity = Vector2.ZERO
 var velocity = Vector2.ZERO
