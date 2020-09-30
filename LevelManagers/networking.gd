@@ -15,18 +15,19 @@ func _ready():
 	get_tree().connect("connected_to_server", self, "_connected_ok")
 	get_tree().connect("connection_failed", self, "_connected_fail")
 	get_tree().connect("server_disconnected", self, "_server_disconnected")
-	my_info.name = NAME
 
 func start_server():
 	var peer = NetworkedMultiplayerENet.new()
 	peer.create_server(int(SERVER_PORT.get_text()), 10)
 	get_tree().network_peer = peer
+	my_info.name = NAME.get_text()
 
 func start_client():
 	var peer = NetworkedMultiplayerENet.new()
 	print("Attempting connection to: ", SERVER_IP.get_text(), ":", SERVER_PORT.get_text())
 	peer.create_client(SERVER_IP.get_text(), int(SERVER_PORT.get_text()))
 	get_tree().network_peer = peer
+	my_info.name = NAME.get_text()
 
 func stop_networking():
 	get_tree().network_peer = null
@@ -51,9 +52,25 @@ func _player_connected(id):
 func _player_disconnected(id):
 	player_info.erase(id)
 
+func regenerate_lobby_list():
+	# clear lobby list
+	for node in get_node("/root/HostOrJoinServer/Columns/PlayerLobbySection/Rows").get_children():
+		node.queue_free()
+	# add current user
+	var label = preload('res://ViewComponents/PlayerLobbyLabel.tscn').instance()
+	label.text = my_info.name
+	get_node("/root/HostOrJoinServer/Columns/PlayerLobbySection/Rows").add_child(label)
+	# regenerate lobby list
+	for player in player_info:
+		var others_label = preload('res://ViewComponents/PlayerLobbyLabel.tscn').instance()
+		others_label.text = player.name
+		get_node("/root/HostOrJoinServer/Columns/PlayerLobbySection/Rows").add_child(others_label)
+	
+
 remotesync func register_player(info):
 	var id = get_tree().get_rpc_sender_id()
 	player_info[id] = info
+	regenerate_lobby_list()
 
 remotesync func pre_configure_game():
 	get_tree().paused = true
