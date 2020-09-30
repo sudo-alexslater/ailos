@@ -22,9 +22,13 @@ normal = Vector2( -0.82068, -0.571388 )
 [node name="TestPlayground" type="Node2D"]
 
 [node name="Scene" type="Node2D" parent="."]
+position = Vector2( -285.671, -127.279 )
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="StaticBody2D" type="StaticBody2D" parent="Scene"]
-position = Vector2( 175.711, -54.4744 )
+position = Vector2( 325.618, -229.837 )
 __meta__ = {
 "_edit_group_": true
 }
@@ -33,7 +37,7 @@ __meta__ = {
 shape = SubResource( 1 )
 
 [node name="StaticBody2D4" type="StaticBody2D" parent="Scene"]
-position = Vector2( 176.63, 270.961 )
+position = Vector2( 301.081, 505.72 )
 __meta__ = {
 "_edit_group_": true
 }
@@ -52,7 +56,7 @@ __meta__ = {
 shape = SubResource( 1 )
 
 [node name="StaticBody2D3" type="StaticBody2D" parent="Scene"]
-position = Vector2( 426.711, 128.55 )
+position = Vector2( 663.703, 136.711 )
 rotation = 1.5708
 __meta__ = {
 "_edit_group_": true
@@ -64,55 +68,50 @@ shape = SubResource( 1 )
 [node name="StaticBody2D5" type="StaticBody2D" parent="Scene"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Scene/StaticBody2D5"]
-position = Vector2( -62.3734, 284 )
+position = Vector2( -38.3317, 457.948 )
 shape = SubResource( 2 )
 
 [node name="StaticBody2D6" type="StaticBody2D" parent="Scene"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Scene/StaticBody2D6"]
-position = Vector2( -38.0361, -32.2653 )
+position = Vector2( 12.8756, -166.616 )
 shape = SubResource( 3 )
 
 [node name="StaticBody2D7" type="StaticBody2D" parent="Scene"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Scene/StaticBody2D7"]
-position = Vector2( 438.082, 8.29084 )
+position = Vector2( 612.175, -168.488 )
 shape = SubResource( 4 )
 
 [node name="StaticBody2D8" type="StaticBody2D" parent="Scene"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Scene/StaticBody2D8"]
-position = Vector2( 422.29, 217.771 )
+position = Vector2( 601.529, 425.351 )
 shape = SubResource( 5 )
 
 [node name="Sprite" type="Sprite" parent="Scene"]
-position = Vector2( 177.493, 109.679 )
-scale = Vector2( 1.8909, 1.2245 )
+position = Vector2( 296.287, 136.549 )
+scale = Vector2( 3.03995, 2.98122 )
 texture = ExtResource( 1 )
 
 [node name="Sprite2" type="Sprite" parent="Scene"]
-position = Vector2( -78.8446, 109.581 )
-scale = Vector2( 0.0552761, 0.651065 )
-texture = ExtResource( 2 )
-
-[node name="Sprite3" type="Sprite" parent="Scene"]
-position = Vector2( 430.75, 105.126 )
-scale = Vector2( 0.0552761, 0.651065 )
+position = Vector2( -92.391, 132.236 )
+scale = Vector2( 0.0552761, 1.60271 )
 texture = ExtResource( 2 )
 
 [node name="Sprite4" type="Sprite" parent="Scene"]
-position = Vector2( 430.75, 105.126 )
-scale = Vector2( 0.0552761, 0.651065 )
+position = Vector2( 687.329, 122.987 )
+scale = Vector2( 0.0552761, 1.62334 )
 texture = ExtResource( 2 )
 
 [node name="Sprite5" type="Sprite" parent="Scene"]
-position = Vector2( 240.097, -54.3449 )
+position = Vector2( -42.7458, -259.406 )
 rotation = 1.55823
 scale = Vector2( 0.0552761, 4.59664 )
 texture = ExtResource( 2 )
 
 [node name="Sprite6" type="Sprite" parent="Scene"]
-position = Vector2( 250.788, 269.942 )
+position = Vector2( 305.942, 507.53 )
 rotation = 1.55823
 scale = Vector2( 0.0552761, 4.59664 )
 texture = ExtResource( 2 )

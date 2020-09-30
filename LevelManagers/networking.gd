@@ -70,7 +70,7 @@ func regenerate_lobby_list():
 remotesync func register_player(info):
 	var id = get_tree().get_rpc_sender_id()
 	player_info[id] = info
-	regenerate_lobby_list()
+	# regenerate_lobby_list()
 
 remotesync func pre_configure_game():
 	get_tree().paused = true
