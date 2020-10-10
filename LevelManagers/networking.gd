@@ -1,13 +1,10 @@
 extends Node
 
-# nodes
-onready var SERVER_IP = $Columns/InputSection/Rows/IPInput
-onready var SERVER_PORT = $Columns/InputSection/Rows/PortInput
-onready var NAME = $Columns/InputSection/Rows/NameInput
-
 # network variables
 var player_info = {}
-var my_info = { name = 'slater-duud' }
+var players_done = []
+var my_info = { name = 'slater-duud', killed = false }
+puppetsync var game_started = false
 
 func _ready():
 	get_tree().connect("network_peer_connected", self, "_player_connected")
@@ -16,68 +13,121 @@ func _ready():
 	get_tree().connect("connection_failed", self, "_connected_fail")
 	get_tree().connect("server_disconnected", self, "_server_disconnected")
 
-func start_server():
+func start_server(port, name):
+	get_tree().network_peer = null
 	var peer = NetworkedMultiplayerENet.new()
-	peer.create_server(int(SERVER_PORT.get_text()), 10)
+	print('Attempting to create Server on port: ', port)
+	peer.create_server(port, 10)
 	get_tree().network_peer = peer
-	my_info.name = NAME.get_text()
+	my_info.name = name
+	var selfPeerID = get_tree().get_network_unique_id()
+	player_info[selfPeerID] = my_info
+	regenerate_lobby_list()
 
-func start_client():
+func start_client(ip, port, name):
+	get_tree().network_peer = null
 	var peer = NetworkedMultiplayerENet.new()
-	print("Attempting connection to: ", SERVER_IP.get_text(), ":", SERVER_PORT.get_text())
-	peer.create_client(SERVER_IP.get_text(), int(SERVER_PORT.get_text()))
+	print("Attempting connection to: ", ip, ":", port)
+	peer.create_client(ip, int(port))
 	get_tree().network_peer = peer
-	my_info.name = NAME.get_text()
+	my_info.name = name
+	regenerate_lobby_list()
 
 func stop_networking():
-	get_tree().network_peer = null
+	if(get_tree().network_peer):
+		print('Resetting game..')
+		get_tree().network_peer = null
+		reset_network_variables()
+		get_node('/root/TestPlayground').queue_free()
+		get_tree().change_scene('res://Levels/MultiplayerLobby.tscn')
+
+func reset_network_variables():
+	player_info = {}
+	game_started = false
+	players_done = []
 
 func start_game(): 
-	rpc("pre_configure_game")
+	if(get_tree().network_peer):
+		rpc("pre_configure_game")
 
 func _connected_ok():
+	rpc_id(1, 'register_player', my_info)
 	print('Connected')
 
 func _server_disconnected():
-	pass
+	print('Kicked by Server')
+	stop_networking()
 
 func _connected_fail():
 	print('Connection Failed')
 	stop_networking()
 
 func _player_connected(id):
-	print(id)
-	rpc_id(id, "register_player", my_info)
+	print('Player joined lobby')
+	if(game_started):
+		render_player(id)
+		if(get_tree().is_network_server()):
+			hot_join_player(id)
 
 func _player_disconnected(id):
+	print('Player left lobby')
 	player_info.erase(id)
+	if(game_started):
+		if(!player_info[int(id)].killed):
+			get_node("/root/TestPlayground/" + str(id)).queue_free()
+
+func hot_join_player(id):
+	rpc_id(id, 'hot_join', player_info)
+	rset_id(id, 'game_started', true)
+
+remote func hot_join(remote_player_info):
+	player_info = remote_player_info
+	load_game(false)
+
+func player_killed(id):
+	player_info[id].killed = true
+	print(player_info[id], " killed")
+	rpc('update_player_info', player_info)
+	
+func get_player_name(id):
+	return player_info[int(id)].name
 
 func regenerate_lobby_list():
+	if(game_started):
+		return
 	# clear lobby list
-	for node in get_node("/root/HostOrJoinServer/Columns/PlayerLobbySection/Rows").get_children():
+	for node in get_node("/root/MultiplayerLobby/Columns/PlayerLobbySection/Rows").get_children():
+		print('cleared')
 		node.queue_free()
-	# add current user
-	var label = preload('res://ViewComponents/PlayerLobbyLabel.tscn').instance()
-	label.text = my_info.name
-	get_node("/root/HostOrJoinServer/Columns/PlayerLobbySection/Rows").add_child(label)
+
 	# regenerate lobby list
 	for player in player_info:
 		var others_label = preload('res://ViewComponents/PlayerLobbyLabel.tscn').instance()
-		others_label.text = player.name
-		get_node("/root/HostOrJoinServer/Columns/PlayerLobbySection/Rows").add_child(others_label)
+		others_label.text = player_info[player].name
+		get_node("/root/MultiplayerLobby/Columns/PlayerLobbySection/Rows").add_child(others_label)
 	
 
-remotesync func register_player(info):
+remote func register_player(info):
 	var id = get_tree().get_rpc_sender_id()
 	player_info[id] = info
-	# regenerate_lobby_list()
+	regenerate_lobby_list()
+	rpc('update_player_info', player_info)
+
+remote func update_player_info(remote_player_info):
+	player_info = remote_player_info
+	regenerate_lobby_list()
 
 remotesync func pre_configure_game():
-	get_tree().paused = true
-	var selfPeerID = get_tree().get_network_unique_id()
+	load_game(true)
+	rpc_id(1, "done_preconfig")
+
+func load_game(pause):
+	get_tree().paused = pause
+
 	# load world
 	var level = load('res://Levels/TestPlayground.tscn').instance()
 	get_node("/root").add_child(level)
+	var selfPeerID = get_tree().get_network_unique_id()
 
 	# load self player
 	var my_player = preload("res://Characters/Player.tscn").instance()
@@ -87,25 +137,30 @@ remotesync func pre_configure_game():
 
 	# load other players
 	for p in player_info:
-		var player = preload("res://Characters/Player.tscn").instance()
-		player.get_child(0).queue_free()
-		player.name = str(p)
-		player.set_network_master(p)
-		get_node('/root/TestPlayground').add_child(player)
-		
-	rpc_id(1, "done_preconfig")
+		if(p == selfPeerID): 
+			continue
+		render_player(p)
 
-var players_done = []
+func render_player(id):
+	var player = preload("res://Characters/Player.tscn").instance()
+	# remove camera
+	player.get_child(0).queue_free()
+	player.name = str(id)
+	player.set_network_master(id)
+	get_node('/root/TestPlayground').add_child(player)
+
 
 remotesync func done_preconfig():
 	var who = get_tree().get_rpc_sender_id()
 	players_done.append(who)
 
-	if(players_done.size() - 1 == player_info.size()):
+	if(players_done.size() == player_info.size()):
 		rpc("post_configure_game")
+		rset("game_started", true)	
 
 remotesync func post_configure_game():
 	if(get_tree().get_rpc_sender_id() == 1):
 		get_tree().paused = false
-	# delete menu
-	$Columns.hide()
+		# delete menu
+		get_node('/root/MultiplayerLobby').queue_free()
+		print('Starting Game')

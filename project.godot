@@ -21,12 +21,17 @@ _global_script_class_icons={
 [application]
 
 config/name="ailos"
-run/main_scene="res://Levels/HostOrJoinServer.tscn"
+run/main_scene="res://Levels/MultiplayerLobby.tscn"
+
+[autoload]
+
+Networking="*res://LevelManagers/networking.gd"
+GameStateManager="*res://LevelManagers/game_state_manager.gd"
 
 [display]
 
-window/size/width=480
-window/size/height=270
+window/size/width=990
+window/size/height=540
 window/size/test_width=960
 window/size/test_height=540
 window/stretch/mode="viewport"

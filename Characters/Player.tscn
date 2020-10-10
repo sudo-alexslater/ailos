@@ -13,7 +13,6 @@ script = ExtResource( 2 )
 
 [node name="PlayerCamera" type="Camera2D" parent="."]
 current = true
-zoom = Vector2( 2, 2 )
 
 [node name="CollisionBox" type="CollisionShape2D" parent="."]
 shape = SubResource( 1 )
@@ -42,3 +41,16 @@ scale = Vector2( 2, 3 )
 [node name="Sprite" type="Sprite" parent="Weapon"]
 scale = Vector2( 1, 0.5 )
 texture = ExtResource( 4 )
+
+[node name="NameTag" type="Label" parent="."]
+margin_left = -54.0
+margin_top = -52.0
+margin_right = 56.0
+margin_bottom = -38.0
+grow_horizontal = 2
+text = "Name Tag"
+align = 1
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
