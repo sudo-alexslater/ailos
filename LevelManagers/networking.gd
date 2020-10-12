@@ -6,6 +6,9 @@ var players_done = []
 var my_info = { name = 'slater-duud', killed = false }
 puppetsync var game_started = false
 
+onready var menus = get_node('/root/Menus')
+onready var game_state_manager = get_node('/root/GameStateManager')
+
 func _ready():
 	get_tree().connect("network_peer_connected", self, "_player_connected")
 	get_tree().connect("network_peer_disconnected", self, "_player_disconnected")
@@ -22,7 +25,7 @@ func start_server(port, name):
 	my_info.name = name
 	var selfPeerID = get_tree().get_network_unique_id()
 	player_info[selfPeerID] = my_info
-	regenerate_lobby_list()
+	menus.update_view()
 
 func start_client(ip, port, name):
 	get_tree().network_peer = null
@@ -31,15 +34,17 @@ func start_client(ip, port, name):
 	peer.create_client(ip, int(port))
 	get_tree().network_peer = peer
 	my_info.name = name
-	regenerate_lobby_list()
+	menus.update_view()
 
 func stop_networking():
 	if(get_tree().network_peer):
 		print('Resetting game..')
 		get_tree().network_peer = null
+		if(game_started):
+			get_node('/root/TestPlayground').queue_free()
 		reset_network_variables()
-		get_node('/root/TestPlayground').queue_free()
-		get_tree().change_scene('res://Levels/MultiplayerLobby.tscn')
+		menus.show_menu('MultiplayerLobby')
+		menus.update_view()
 
 func reset_network_variables():
 	player_info = {}
@@ -91,31 +96,16 @@ func player_killed(id):
 	
 func get_player_name(id):
 	return player_info[int(id)].name
-
-func regenerate_lobby_list():
-	if(game_started):
-		return
-	# clear lobby list
-	for node in get_node("/root/MultiplayerLobby/Columns/PlayerLobbySection/Rows").get_children():
-		print('cleared')
-		node.queue_free()
-
-	# regenerate lobby list
-	for player in player_info:
-		var others_label = preload('res://ViewComponents/PlayerLobbyLabel.tscn').instance()
-		others_label.text = player_info[player].name
-		get_node("/root/MultiplayerLobby/Columns/PlayerLobbySection/Rows").add_child(others_label)
 	
-
 remote func register_player(info):
 	var id = get_tree().get_rpc_sender_id()
 	player_info[id] = info
-	regenerate_lobby_list()
+	menus.update_view()
 	rpc('update_player_info', player_info)
 
 remote func update_player_info(remote_player_info):
 	player_info = remote_player_info
-	regenerate_lobby_list()
+	menus.update_view()
 
 remotesync func pre_configure_game():
 	load_game(true)
@@ -161,6 +151,6 @@ remotesync func done_preconfig():
 remotesync func post_configure_game():
 	if(get_tree().get_rpc_sender_id() == 1):
 		get_tree().paused = false
-		# delete menu
-		get_node('/root/MultiplayerLobby').queue_free()
+		# delete menus
+		menus.hide_all()
 		print('Starting Game')

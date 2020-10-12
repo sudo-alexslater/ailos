@@ -1,0 +1,67 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Views/pause_screen.gd" type="Script" id=1]
+[ext_resource path="res://Materials/obfuscated_menu.material" type="Material" id=2]
+[ext_resource path="res://ViewComponents/Obfuscate.tscn" type="PackedScene" id=3]
+
+[node name="PauseScreen" type="Control"]
+material = ExtResource( 2 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Obfuscate" parent="." instance=ExtResource( 3 )]
+
+[node name="Rows" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TitleContainer" type="CenterContainer" parent="Rows"]
+margin_right = 1500.0
+margin_bottom = 14.0
+
+[node name="PauseTitle" type="Label" parent="Rows/TitleContainer"]
+margin_left = 634.0
+margin_right = 866.0
+margin_bottom = 14.0
+text = "You've paused the game. What's up?"
+
+[node name="ButtonCenter" type="CenterContainer" parent="Rows"]
+margin_top = 18.0
+margin_right = 1500.0
+margin_bottom = 900.0
+size_flags_vertical = 3
+
+[node name="Buttons" type="VBoxContainer" parent="Rows/ButtonCenter"]
+margin_left = 697.0
+margin_top = 419.0
+margin_right = 803.0
+margin_bottom = 463.0
+
+[node name="ResumeButton" type="Button" parent="Rows/ButtonCenter/Buttons"]
+margin_right = 106.0
+margin_bottom = 20.0
+text = "Resume Game"
+
+[node name="ExitButton" type="Button" parent="Rows/ButtonCenter/Buttons"]
+margin_top = 24.0
+margin_right = 106.0
+margin_bottom = 44.0
+text = "Exit Game"
+
+[node name="DisconnectButton" type="Button" parent="Rows/ButtonCenter/Buttons"]
+visible = false
+margin_top = 48.0
+margin_right = 155.0
+margin_bottom = 68.0
+text = "Disconnect From Host"
+[connection signal="pressed" from="Rows/ButtonCenter/Buttons/ResumeButton" to="." method="_on_ResumeButton_pressed"]
+[connection signal="pressed" from="Rows/ButtonCenter/Buttons/ExitButton" to="." method="_on_ExitButton_pressed"]
+[connection signal="pressed" from="Rows/ButtonCenter/Buttons/DisconnectButton" to="." method="_on_DisconnectButton_pressed"]

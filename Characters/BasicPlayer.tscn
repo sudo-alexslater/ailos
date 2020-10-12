@@ -1,0 +1,111 @@
+[gd_scene load_steps=26 format=2]
+
+[ext_resource path="res://Action RPG Resources/Player/Player.png" type="Texture" id=1]
+[ext_resource path="res://Characters/basic_player.gd" type="Script" id=2]
+[ext_resource path="res://Animations/walk_up.tres" type="Animation" id=3]
+[ext_resource path="res://Animations/walk_right.tres" type="Animation" id=4]
+[ext_resource path="res://Animations/walk_left.tres" type="Animation" id=5]
+[ext_resource path="res://Animations/walk_down.tres" type="Animation" id=6]
+[ext_resource path="res://Animations/idle_right.tres" type="Animation" id=7]
+[ext_resource path="res://Animations/idle_down.tres" type="Animation" id=8]
+[ext_resource path="res://Animations/idle_up.tres" type="Animation" id=9]
+[ext_resource path="res://Animations/idle_left.tres" type="Animation" id=10]
+
+[sub_resource type="CapsuleShape2D" id=1]
+radius = 8.73926
+height = 3.6145
+
+[sub_resource type="AnimationNodeAnimation" id=2]
+animation = "idle_left"
+
+[sub_resource type="AnimationNodeAnimation" id=3]
+animation = "idle_down"
+
+[sub_resource type="AnimationNodeAnimation" id=4]
+animation = "idle_up"
+
+[sub_resource type="AnimationNodeAnimation" id=5]
+animation = "idle_right"
+
+[sub_resource type="AnimationNodeBlendSpace2D" id=6]
+blend_point_0/node = SubResource( 2 )
+blend_point_0/pos = Vector2( -1, 0 )
+blend_point_1/node = SubResource( 3 )
+blend_point_1/pos = Vector2( 0, 1 )
+blend_point_2/node = SubResource( 4 )
+blend_point_2/pos = Vector2( 0, -1 )
+blend_point_3/node = SubResource( 5 )
+blend_point_3/pos = Vector2( 1, 0 )
+blend_mode = 1
+
+[sub_resource type="AnimationNodeAnimation" id=9]
+animation = "walk_left"
+
+[sub_resource type="AnimationNodeAnimation" id=10]
+animation = "walk_down"
+
+[sub_resource type="AnimationNodeAnimation" id=11]
+animation = "walk_right"
+
+[sub_resource type="AnimationNodeAnimation" id=12]
+animation = "walk_up"
+
+[sub_resource type="AnimationNodeBlendSpace2D" id=13]
+blend_point_0/node = SubResource( 9 )
+blend_point_0/pos = Vector2( -1, 0 )
+blend_point_1/node = SubResource( 10 )
+blend_point_1/pos = Vector2( 0, 1 )
+blend_point_2/node = SubResource( 11 )
+blend_point_2/pos = Vector2( 1, 0 )
+blend_point_3/node = SubResource( 12 )
+blend_point_3/pos = Vector2( 0, -1 )
+blend_mode = 1
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=14]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=15]
+
+[sub_resource type="AnimationNodeStateMachine" id=7]
+states/idle/node = SubResource( 6 )
+states/idle/position = Vector2( 417, 96 )
+states/walk/node = SubResource( 13 )
+states/walk/position = Vector2( 559, 96 )
+transitions = [ "idle", "walk", SubResource( 14 ), "walk", "idle", SubResource( 15 ) ]
+start_node = "idle"
+
+[sub_resource type="AnimationNodeStateMachinePlayback" id=8]
+
+[node name="BasicPlayer" type="KinematicBody2D"]
+script = ExtResource( 2 )
+
+[node name="Collider" type="CollisionShape2D" parent="."]
+position = Vector2( 0.233978, 3.36396 )
+shape = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+hframes = 60
+frame = 12
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/idle_down = ExtResource( 8 )
+anims/idle_left = ExtResource( 10 )
+anims/idle_right = ExtResource( 7 )
+anims/idle_up = ExtResource( 9 )
+anims/walk_down = ExtResource( 6 )
+anims/walk_left = ExtResource( 5 )
+anims/walk_right = ExtResource( 4 )
+anims/walk_up = ExtResource( 3 )
+
+[node name="PlayerCamera" type="Camera2D" parent="."]
+current = true
+drag_margin_h_enabled = true
+drag_margin_v_enabled = true
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource( 7 )
+anim_player = NodePath("../AnimationPlayer")
+active = true
+parameters/playback = SubResource( 8 )
+parameters/idle/blend_position = Vector2( 0, 0 )
+parameters/walk/blend_position = Vector2( 0, 0 )
