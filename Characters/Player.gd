@@ -24,6 +24,7 @@ var health = 100
 var dead = false
 
 # onready vars
+
 onready var body = $Sprite
 onready var shield = $Shield
 onready var weapon = $Weapon
@@ -33,6 +34,7 @@ onready var name_tag = $NameTag
 onready var network = get_node('/root/Networking')
 
 # network vars
+
 puppet var puppet_position = Vector2()
 puppet var puppet_mouse_vector = Vector2()
 puppet var puppet_shield_vector = Vector2()
@@ -75,7 +77,7 @@ func set_network_state():
 	if(get_tree().network_peer):
 		rset_unreliable('puppet_position', position)
 		rset_unreliable('puppet_mouse_vector', local_mouse_pos)
-		rset('puppet_state', {health = health, shielding = shielding, dead = dead})
+		rset('puppet_state', {health = health, shielding = shielding, dead = dead})	
 		
 func handle_input():
 	local_mouse_pos = get_local_mouse_position()

@@ -1,13 +1,22 @@
 extends Node
 
+# onready refs
+
+onready var menus = get_node('/root/Menus')
+onready var game_state_manager = get_node('/root/GameStateManager')
+onready var player_node = preload("res://Characters/BasicPlayer.tscn");
+
 # network variables
+
 var player_info = {}
 var players_done = []
 var my_info = { name = 'slater-duud', killed = false }
 puppetsync var game_started = false
 
-onready var menus = get_node('/root/Menus')
-onready var game_state_manager = get_node('/root/GameStateManager')
+# state vars
+
+var loaded_level
+
 
 func _ready():
 	get_tree().connect("network_peer_connected", self, "_player_connected")
@@ -17,32 +26,39 @@ func _ready():
 	get_tree().connect("server_disconnected", self, "_server_disconnected")
 
 func start_server(port, name):
-	get_tree().network_peer = null
 	var peer = NetworkedMultiplayerENet.new()
-	print('Attempting to create Server on port: ', port)
 	peer.create_server(port, 10)
 	get_tree().network_peer = peer
-	my_info.name = name
 	var selfPeerID = get_tree().get_network_unique_id()
+
+	print('Attempting to create Server on port: ', port)
+
+	my_info.name = name
 	player_info[selfPeerID] = my_info
 	menus.update_view()
 
 func start_client(ip, port, name):
-	get_tree().network_peer = null
 	var peer = NetworkedMultiplayerENet.new()
+
 	print("Attempting connection to: ", ip, ":", port)
+
 	peer.create_client(ip, int(port))
 	get_tree().network_peer = peer
+
 	my_info.name = name
 	menus.update_view()
 
 func stop_networking():
 	if(get_tree().network_peer):
-		print('Resetting game..')
+		print('Resetting network..')
 		get_tree().network_peer = null
+
+		# if game has started free the loaded level
 		if(game_started):
-			get_node('/root/TestPlayground').queue_free()
+			get_node(loaded_level).queue_free()
+
 		reset_network_variables()
+
 		menus.show_menu('MultiplayerLobby')
 		menus.update_view()
 
@@ -79,7 +95,7 @@ func _player_disconnected(id):
 	player_info.erase(id)
 	if(game_started):
 		if(!player_info[int(id)].killed):
-			get_node("/root/TestPlayground/" + str(id)).queue_free()
+			get_node(loaded_level + str(id)).queue_free()
 
 func hot_join_player(id):
 	rpc_id(id, 'hot_join', player_info)
@@ -115,15 +131,16 @@ func load_game(pause):
 	get_tree().paused = pause
 
 	# load world
-	var level = load('res://Levels/TestPlayground.tscn').instance()
+	var level = load(game_state_manager.game_config['ServerScenePath']).instance()
 	get_node("/root").add_child(level)
+	loaded_level = level.get_path()
 	var selfPeerID = get_tree().get_network_unique_id()
 
 	# load self player
-	var my_player = preload("res://Characters/Player.tscn").instance()
+	var my_player = player_node.instance()
 	my_player.name = str(selfPeerID)
 	my_player.set_network_master(selfPeerID)
-	get_node('/root/TestPlayground').add_child(my_player)
+	get_node(loaded_level).add_child(my_player)
 
 	# load other players
 	for p in player_info:
@@ -132,12 +149,12 @@ func load_game(pause):
 		render_player(p)
 
 func render_player(id):
-	var player = preload("res://Characters/Player.tscn").instance()
+	var player = player_node.instance()
 	# remove camera
-	player.get_child(0).queue_free()
+	player.get_node("PlayerCamera").queue_free()
 	player.name = str(id)
 	player.set_network_master(id)
-	get_node('/root/TestPlayground').add_child(player)
+	get_node(loaded_level).add_child(player)
 
 
 remotesync func done_preconfig():

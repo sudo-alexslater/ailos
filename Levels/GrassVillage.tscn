@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
-[ext_resource path="res://Characters/BasicPlayer.tscn" type="PackedScene" id=1]
+[ext_resource path="res://LevelComponents/Shop.tscn" type="PackedScene" id=1]
 [ext_resource path="res://LevelComponents/Bush.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Action RPG Resources/World/GrassBackground.png" type="Texture" id=3]
-[ext_resource path="res://Action RPG Resources/World/DirtTileset.png" type="Texture" id=4]
+[ext_resource path="res://Resources/World/GrassBackground.png" type="Texture" id=3]
+[ext_resource path="res://Resources/World/DirtTileset.png" type="Texture" id=4]
+[ext_resource path="res://Characters/BasicPlayer.tscn" type="PackedScene" id=5]
 
 [sub_resource type="TileSet" id=1]
 0/name = "DirtTileset.png 0"
@@ -30,39 +31,39 @@
 0/shapes = [  ]
 0/z_index = 0
 
-[node name="GrassVillage" type="Node2D"]
+[node name="GrassVillage" type="YSort"]
 
-[node name="Sprite" type="Sprite" parent="."]
-position = Vector2( 160, 90 )
+[node name="BG" type="Sprite" parent="."]
+position = Vector2( 159.251, 90 )
+z_index = -5
 texture = ExtResource( 3 )
 region_enabled = true
 region_rect = Rect2( 0, 0, 3200, 1800 )
 
 [node name="TileMap" type="TileMap" parent="."]
+z_index = -4
 tile_set = SubResource( 1 )
 cell_size = Vector2( 16, 16 )
 format = 1
-tile_data = PoolIntArray( 196612, 0, 0, 196613, 0, 1, 196614, 0, 1, 196615, 0, 5, 196616, 0, 196609, 196617, 0, 196609, 196618, 0, 196609, 196619, 0, 6, 196620, 0, 2, 262148, 0, 65536, 262149, 0, 65537, 262150, 0, 65541, 262151, 0, 131074, 262155, 0, 131072, 262156, 0, 65543, 327684, 0, 131072, 327685, 0, 131073, 327686, 0, 131074, 327692, 0, 196612, 327693, 0, 196609, 327694, 0, 196609, 327695, 0, 196609, 327696, 0, 6, 327697, 0, 1, 327698, 0, 1, 327699, 0, 2, 393232, 0, 131072, 393233, 0, 65542, 393234, 0, 65537, 393235, 0, 65538, 458769, 0, 131072, 458770, 0, 131073, 458771, 0, 131074 )
+tile_data = PoolIntArray( -9, 0, 0, -8, 0, 1, -7, 0, 1, -6, 0, 2, -65526, 0, 3, 65525, 0, 0, 65526, 0, 1, 65527, 0, 131078, 65528, 0, 65537, 65529, 0, 65537, 65530, 0, 131077, 65531, 0, 2, 8, 0, 4, 9, 0, 196609, 10, 0, 196615, 131061, 0, 65536, 131062, 0, 65537, 131063, 0, 65537, 131064, 0, 65537, 131065, 0, 65537, 131066, 0, 65537, 131067, 0, 131077, 131068, 0, 2, 65542, 0, 4, 65543, 0, 196609, 65544, 0, 196615, 196597, 0, 65536, 196598, 0, 65537, 196599, 0, 65537, 196600, 0, 65537, 196601, 0, 65537, 196602, 0, 65537, 196603, 0, 65537, 196604, 0, 65538, 131078, 0, 65539, 262133, 0, 131072, 262134, 0, 65542, 262135, 0, 65537, 262136, 0, 65537, 262137, 0, 65537, 262138, 0, 65537, 262139, 0, 65537, 262140, 0, 262149, 262141, 0, 196609, 262142, 0, 196609, 262143, 0, 196609, 196608, 0, 196609, 196609, 0, 7, 196612, 0, 0, 196613, 0, 1, 196614, 0, 131080, 196615, 0, 5, 196616, 0, 196609, 196617, 0, 196609, 196618, 0, 196609, 196619, 0, 6, 196620, 0, 2, 327670, 0, 131072, 327671, 0, 65542, 327672, 0, 65537, 327673, 0, 65537, 327674, 0, 65541, 327675, 0, 131073, 327676, 0, 131074, 262145, 0, 196612, 262146, 0, 196609, 262147, 0, 196609, 262148, 0, 262150, 262149, 0, 65537, 262150, 0, 65541, 262151, 0, 131074, 262155, 0, 131072, 262156, 0, 65543, 393207, 0, 131072, 393208, 0, 131073, 393209, 0, 131073, 393210, 0, 131074, 327684, 0, 131072, 327685, 0, 65542, 327686, 0, 65538, 327692, 0, 196612, 327693, 0, 196609, 327694, 0, 196609, 327695, 0, 196609, 327696, 0, 6, 327697, 0, 1, 327698, 0, 1, 327699, 0, 2, 393221, 0, 196617, 393222, 0, 131074, 393232, 0, 131072, 393233, 0, 65542, 393234, 0, 65537, 393235, 0, 65538, 458756, 0, 4, 458757, 0, 196615, 458769, 0, 131072, 458770, 0, 131073, 458771, 0, 131074, 524292, 0, 65539, 589828, 0, 65539, 655362, 0, 196608, 655363, 0, 196609, 655364, 0, 196615 )
 
-[node name="BasicPlayer" parent="." instance=ExtResource( 1 )]
-position = Vector2( 91.1899, 69.7357 )
-
-[node name="Environment" type="Node2D" parent="."]
-
-[node name="Bush" parent="Environment" instance=ExtResource( 2 )]
+[node name="Bush" parent="." instance=ExtResource( 2 )]
 position = Vector2( 19.3293, 122.728 )
 
-[node name="Bush2" parent="Environment" instance=ExtResource( 2 )]
-position = Vector2( 152.146, 134.075 )
+[node name="Bush3" parent="." instance=ExtResource( 2 )]
+position = Vector2( 66.9681, 21.8663 )
 
-[node name="Bush3" parent="Environment" instance=ExtResource( 2 )]
-position = Vector2( 67.7172, 22.6154 )
-
-[node name="Bush4" parent="Environment" instance=ExtResource( 2 )]
+[node name="Bush4" parent="." instance=ExtResource( 2 )]
 position = Vector2( 152.146, 86.0203 )
 
-[node name="Bush6" parent="Environment" instance=ExtResource( 2 )]
+[node name="Bush6" parent="." instance=ExtResource( 2 )]
 position = Vector2( 258.933, 111.382 )
 
-[node name="Bush5" parent="Environment" instance=ExtResource( 2 )]
+[node name="Bush5" parent="." instance=ExtResource( 2 )]
 position = Vector2( 278.288, 42.3043 )
+
+[node name="Shop" parent="." instance=ExtResource( 1 )]
+position = Vector2( 78.2866, -40.8289 )
+
+[node name="BasicPlayer" parent="." instance=ExtResource( 5 )]
+position = Vector2( -28.0933, 100.387 )

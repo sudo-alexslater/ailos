@@ -3,9 +3,12 @@ extends Node
 # global state variables
 var paused = false 
 var routes = {
-		'Menus' : {'active' : true, 'path': 'res://Views/Menus.tscn'}, 
-		'GrassVillage' : {'active' : false, 'path' : 'res://Levels/GrassVillage.tscn'} 
-	}
+	'Menus' : {'active' : true, 'path': 'res://Views/Menus.tscn'}, 
+	'GrassVillage' : {'active' : false, 'path' : 'res://Levels/GrassVillage.tscn'} 
+}
+var game_config = {
+	'ServerScenePath': routes['GrassVillage'].path
+}
 
 # nodes
 onready var menus = get_node("/root/Menus")
