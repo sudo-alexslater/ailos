@@ -36,6 +36,6 @@ func update_lobby_list():
 
 	# regenerate lobby list
 	for player in network.player_info:
-		var others_label = preload('res://ViewComponents/PlayerLobbyLabel.tscn').instance()
+		var others_label = preload('res://Views/ViewComponents/PlayerLobbyLabel.tscn').instance()
 		others_label.text = network.player_info[player].name
 		$Columns/PlayerLobbySection/Rows.add_child(others_label)
